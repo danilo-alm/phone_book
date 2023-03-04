@@ -3,8 +3,8 @@ from typing import List
 class Contact:
     def __init__(self, name: str, phone_number: str = 'Empty',
                  email: str = 'Empty'):
-        self.name = name
-        self.phone_number = phone_number
+        self.name = name.title()
+        self.phone_number = str(phone_number)
         self.email = email
     
 class Node:
@@ -15,12 +15,15 @@ class Node:
 
 class PhoneBook:
 
-    size = 0
+    length = 0
 
     def __init__(self, head=None):
-        self.head = head
+        self.head = self.tail = head
         if head is not None:
             size += 1
+
+    def sort(self):
+        return NotImplementedError
 
     def add(self, contacts: List[Contact]):
 
@@ -28,21 +31,50 @@ class PhoneBook:
             contacts = [contacts]
 
         if self.head is None:
-            self.head = Node(contact=contacts.pop(0))
-            self.size += 1
+            self.head = self.tail = Node(contact=contacts.pop(0))
+            self.length += 1
 
-        if contacts:
+        if not contacts:
+            return
+
+        while contacts:
+            node = Node(contact=contacts.pop(0))
+
             curr = self.head
-            while curr.next is not None:
+            while (curr.next is not None) and (curr.next.contact.name < node.contact.name):
                 curr = curr.next
+            
+            if curr.next is None:
+                # If `curr` is `self.head`
+                if curr.previous is None:
+                    if curr.contact.name > node.contact.name:
+                        node.next = curr
+                        curr.previous = node
+                        self.head = node
+                        self.tail = curr
+                    else:
+                        node.previous = curr
+                        curr.next = node
+                        self.tail = node
+                else:
+                    # If `curr` is `self.tail`
+                    node.previous = curr
+                    curr.next = node
+                    self.tail = node
+            else:
+                # Add before
+                if curr == self.head:
+                    node.next = curr
+                    curr.previous = node
+                    self.head = node
+                    self.tail = curr
+                else:
+                    curr.previous.next = node
+                    node.previous = curr.previous
+                    curr.previous = node
+                    node.next = curr
+            self.length += 1
 
-            while contacts:
-                node = Node(contact=contacts.pop(0))
-                node.previous = curr
-                curr.next = node
-                self.size += 1
-                curr = curr.next
-    
     def print(self):
         curr = self.head
         while curr is not None:
@@ -53,8 +85,10 @@ class PhoneBook:
             print(f'Name: {name}\nEmail: {email}\nPhone Number: {phone_number}')
             curr = curr.next
     
-    def print_nodes(self):
+    def print_debug(self):
         print('----- DEBUGGING -----')
+        print(f'LIST\'S HEAD: {self.head.contact.name}\nLIST\'S TAIL: {self.tail.contact.name}\nLIST\'S SIZE: {self.length}')
+
         curr = self.head
         while curr is not None:
             print('-'*30)
@@ -69,16 +103,14 @@ class PhoneBook:
                 next_name = 'None'
             print(f'Previous: {previous_name}\nSelf: {curr.contact.name}\nNext: {next_name}')
             curr = curr.next
-        
-        
 
 # Debugging
 if __name__ == '__main__':
     pb = PhoneBook()
-    c1 = Contact(name='Joao', email='foo.bar@example.com', phone_number='00 1234 5678')
-    c2 = Contact(name='Lucas', email='bar.baz@example.com', phone_number='00 1234 5678')
-    c3 = Contact(name='Mateus', email='baz.foo@example.com', phone_number='00 1234 5678')
-    pb.add([c1, c2, c3, c1, c2, c3])
+    contacts = []
+    for name in ('ademar', 'bruno', 'cabral', 'daniel', 'erick', 'fabiana', 'gabriel', 'heitor'):
+        contacts.append(Contact(name=name, email='foo.bar@example.com', phone_number='00 1234 5678'))
+    pb.add(contacts=contacts[::-1])
     pb.print()
     print()
-    pb.print_nodes()
+    pb.print_debug()
