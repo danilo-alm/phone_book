@@ -25,8 +25,10 @@ class PhoneBook:
     def sort(self):
         return NotImplementedError
 
-    def add(self, contacts: List[Contact]):
+    
 
+    def add(self, contacts: List[Contact] or Contact):
+        
         if not isinstance(contacts, list):
             contacts = [contacts]
 
@@ -67,7 +69,6 @@ class PhoneBook:
                     node.next = curr
                     curr.previous = node
                     self.head = node
-                    self.tail = curr
                 else:
                     curr.previous.next = node
                     node.previous = curr.previous
