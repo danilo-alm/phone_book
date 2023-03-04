@@ -9,7 +9,7 @@ class Contact:
     
 class Node:
     def __init__(self, contact: Contact, previous: 'Node' = None, next: 'Node' = None):
-        self.previous = previous
+        self.prev = previous
         self.contact = contact
         self.next = next
 
@@ -45,7 +45,7 @@ class PhoneBook:
             None
         """
         node.next = self.head
-        self.head.previous = node
+        self.head.prev = node
         self.head = node
         if update_tail:
             self.tail = self.head
@@ -61,7 +61,7 @@ class PhoneBook:
             None
         """
         self.tail.next = node
-        node.previous = self.tail
+        node.prev = self.tail
         self.tail = node
 
     def add(self, contacts: List[Contact] or Contact):
@@ -85,18 +85,18 @@ class PhoneBook:
             node = Node(contact=contacts.pop(0))
 
             curr = self.head
-            while (curr.next is not None) and (curr.next.contact.name < node.contact.name):
+            while (curr.next is not None) and (node.contact.name > curr.next.contact.name):
                 curr = curr.next
             
-            if curr == self.head:
+            if (curr == self.head) and (node.contact.name < curr.contact.name):
                 self.push(node=node, update_tail=True)
             elif curr.next is None:
                 self.append(node=node)
             else:
-                curr.previous.next = node
-                node.previous = curr.previous
-                curr.previous = node
-                node.next = curr
+                node.next = curr.next
+                node.prev = curr
+                curr.next.prev = node
+                curr.next = node
             self.length += 1
 
     def print(self):
@@ -134,8 +134,8 @@ class PhoneBook:
         curr = self.head
         while curr is not None:
             print('-'*30)
-            if curr.previous is not None:
-                previous_name = curr.previous.contact.name
+            if curr.prev is not None:
+                previous_name = curr.prev.contact.name
             else:
                 previous_name = 'None'
 
@@ -146,13 +146,17 @@ class PhoneBook:
             print(f'Previous: {previous_name}\nSelf: {curr.contact.name}\nNext: {next_name}')
             curr = curr.next
 
+from random import shuffle
 # Debugging
 if __name__ == '__main__':
     pb = PhoneBook()
     contacts = []
-    for name in ('ademar', 'bruno', 'cabral', 'daniel', 'erick', 'fabiana', 'gabriel', 'heitor'):
+    for name in ('ademar', 'bruno', 'cabral', 'daniel', 'erick', 'fabiana', 'gabriel',
+                 'heitor', 'adalberto', 'breno', 'zaratusta'):
         contacts.append(Contact(name=name, email='foo.bar@example.com', phone_number='00 1234 5678'))
-    pb.add(contacts=contacts[::-1])
+    shuffle(contacts)
+    pb.add(contacts=contacts)
     pb.print()
     print()
     pb.print_debug()
+    
