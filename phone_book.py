@@ -50,6 +50,19 @@ class PhoneBook:
         if update_tail:
             self.tail = self.head
 
+    def append(self, node: Node):
+        """
+        Add a new element to the PhoneBook's end
+
+        Args:
+            node: `Node` to be added
+        
+        Returns:
+            None
+        """
+        self.tail.next = node
+        node.previous = self.tail
+        self.tail = node
 
     def add(self, contacts: List[Contact] or Contact):
         """
@@ -68,9 +81,6 @@ class PhoneBook:
             self.head = self.tail = Node(contact=contacts.pop(0))
             self.length += 1
 
-        if not contacts:
-            return
-
         while contacts:
             node = Node(contact=contacts.pop(0))
 
@@ -78,29 +88,15 @@ class PhoneBook:
             while (curr.next is not None) and (curr.next.contact.name < node.contact.name):
                 curr = curr.next
             
-            if curr.next is None:
-                # If `curr` is `self.head`
-                if curr.previous is None:
-                    if curr.contact.name > node.contact.name:
-                        self.push(node=node, update_tail=True)
-                    else:
-                        node.previous = curr
-                        curr.next = node
-                        self.tail = node
-                else:
-                    # If `curr` is `self.tail`
-                    node.previous = curr
-                    curr.next = node
-                    self.tail = node
+            if curr == self.head:
+                self.push(node=node, update_tail=True)
+            elif curr.next is None:
+                self.append(node=node)
             else:
-                # Add before
-                if curr == self.head:
-                    self.push(node=node, update_tail=True)
-                else:
-                    curr.previous.next = node
-                    node.previous = curr.previous
-                    curr.previous = node
-                    node.next = curr
+                curr.previous.next = node
+                node.previous = curr.previous
+                curr.previous = node
+                node.next = curr
             self.length += 1
 
     def print(self):
