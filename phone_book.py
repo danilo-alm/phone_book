@@ -14,7 +14,6 @@ class Node:
         self.next = next
 
 class PhoneBook:
-
     length = 0
 
     def __init__(self, head=None):
@@ -23,12 +22,29 @@ class PhoneBook:
             size += 1
 
     def sort(self):
+        """
+        Sort PhoneBook using TODO: DEFINE SORTING METHOD
+
+        Args:
+            None
+        
+        Returns:
+            None
+        """
         return NotImplementedError
 
     
 
     def add(self, contacts: List[Contact] or Contact):
+        """
+        Adds new contacts in the phone book respecting alphabetic order
+
+        Args:
+            Contacts: List of `Contact` or a single `Contact` object
         
+        Returns:
+            None
+        """
         if not isinstance(contacts, list):
             contacts = [contacts]
 
@@ -77,6 +93,14 @@ class PhoneBook:
             self.length += 1
 
     def print(self):
+        """
+        Iterate through every contact in the PhoneBook and print its information
+
+        Args:
+            None
+        Returns:
+            None
+        """
         curr = self.head
         while curr is not None:
             name, email, phone_number = curr.contact.name, \
@@ -87,6 +111,16 @@ class PhoneBook:
             curr = curr.next
     
     def print_debug(self):
+        """
+        Prints relevant information for debugging, such as some of PhoneBook's attributes
+        and information about each PhoneBook's Node
+
+        Args:
+            None
+        
+        Returns:
+            None
+        """
         print('----- DEBUGGING -----')
         print(f'LIST\'S HEAD: {self.head.contact.name}\nLIST\'S TAIL: {self.tail.contact.name}\nLIST\'S SIZE: {self.length}')
 
