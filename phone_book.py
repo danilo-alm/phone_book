@@ -33,14 +33,30 @@ class PhoneBook:
         """
         return NotImplementedError
 
-    
+    def push(self, node: Node, update_tail: bool = False):
+        """
+        Add an element before the PhoneBook's head
+
+        Args:
+            node: `Node` to be added
+            update_tail: whether to set the new tail as the old head
+        
+        Returns:
+            None
+        """
+        node.next = self.head
+        self.head.previous = node
+        self.head = node
+        if update_tail:
+            self.tail = self.head
+
 
     def add(self, contacts: List[Contact] or Contact):
         """
         Adds new contacts in the phone book respecting alphabetic order
 
         Args:
-            Contacts: List of `Contact` or a single `Contact` object
+            contacts: List of `Contact` or a single `Contact` object
         
         Returns:
             None
@@ -66,10 +82,7 @@ class PhoneBook:
                 # If `curr` is `self.head`
                 if curr.previous is None:
                     if curr.contact.name > node.contact.name:
-                        node.next = curr
-                        curr.previous = node
-                        self.head = node
-                        self.tail = curr
+                        self.push(node=node, update_tail=True)
                     else:
                         node.previous = curr
                         curr.next = node
@@ -82,9 +95,7 @@ class PhoneBook:
             else:
                 # Add before
                 if curr == self.head:
-                    node.next = curr
-                    curr.previous = node
-                    self.head = node
+                    self.push(node=node, update_tail=True)
                 else:
                     curr.previous.next = node
                     node.previous = curr.previous
