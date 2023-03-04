@@ -50,12 +50,33 @@ class PhoneBook:
             print('-'*30)
             print(f'Name: {name}\nEmail: {email}\nPhone Number: {phone_number}')
             curr = curr.next
+    
+    def print_nodes(self):
+        print('----- DEBUGGING -----')
+        curr = self.head
+        while curr is not None:
+            print('-'*30)
+            if curr.previous is not None:
+                previous_name = curr.previous.contact.name
+            else:
+                previous_name = 'None'
+
+            if curr.next is not None:
+                next_name = curr.next.contact.name
+            else:
+                next_name = 'None'
+            print(f'Previous: {previous_name}\nSelf: {curr.contact.name}\nNext: {next_name}')
+            curr = curr.next
+        
+        
 
 # Debugging
 if __name__ == '__main__':
     pb = PhoneBook()
-    c1 = Contact(name='Foo Bar', email='foo.bar@example.com', phone_number='00 1234 5678')
-    c2 = Contact(name='Bar Baz', email='bar.baz@example.com', phone_number='00 1234 5678')
-    c3 = Contact(name='Baz Foo', email='baz.foo@example.com', phone_number='00 1234 5678')
+    c1 = Contact(name='Joao', email='foo.bar@example.com', phone_number='00 1234 5678')
+    c2 = Contact(name='Lucas', email='bar.baz@example.com', phone_number='00 1234 5678')
+    c3 = Contact(name='Mateus', email='baz.foo@example.com', phone_number='00 1234 5678')
     pb.add([c1, c2, c3, c1, c2, c3])
     pb.print()
+    print()
+    pb.print_nodes()
