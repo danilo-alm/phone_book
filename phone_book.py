@@ -29,6 +29,7 @@ class PhoneBook:
 
         if self.head is None:
             self.head = Node(contact=contacts.pop(0))
+            self.size += 1
 
         if contacts:
             curr = self.head
@@ -39,6 +40,7 @@ class PhoneBook:
                 node = Node(contact=contacts.pop(0))
                 node.previous = curr
                 curr.next = node
+                self.size += 1
                 curr = curr.next
     
     def print(self):
