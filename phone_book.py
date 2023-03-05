@@ -118,24 +118,47 @@ class PhoneBook:
         if index >= self.length:
             return IndexError
         
-        curr = self.head
-        for _ in range(index):
-            curr = curr.next
+        if index == 0:
+            curr = self.head
+        elif index == self.length - 1:
+            curr = self.tail
+        else:
+            curr = self.head
+            for _ in range(index):
+                curr = curr.next
         
         conf = True
 
         if confirmation:
-            if input(f'Do you wish to remove the contact:\n{"-"*30}\n \
-                    Name: {curr.contact.name}\n \
-                    Phone Number: {curr.contact.phone_number}\n \
-                    Email: {curr.contact.email}\n{"-"*30}\n \
-                    (Yes/no): ').strip().upper() != 'YES':
+            text = \
+f'''Do you wish to remove the contact:\n{"-"*30}
+Name: {curr.contact.name}
+Phone Number: {curr.contact.phone_number}
+Email: {curr.contact.email}\n{"-"*30}
+(Yes/no): '''
+            
+            if input(text).strip().upper() != 'YES':
                 conf = False
- 
+
+        return_value = None
+
         if conf:
-            curr.prev.next = curr.next
-            curr.next.prev = curr.prev
-            return curr
+            if index == 0:
+                # Remove first element
+                return_value = self.head
+                self.head = self.head.next
+                self.head.prev = None
+            elif index == self.length - 1:
+                # Remove last element
+                return_value = self.tail
+                self.tail = self.tail.prev
+                self.tail.next = None
+            else:
+                return_value = curr
+                curr.prev.next = curr.next
+                curr.next.prev = curr.prev
+
+        return return_value
 
     def print_contacts(self):
         """
@@ -212,10 +235,9 @@ if __name__ == '__main__':
 
     pb = PhoneBook()
     contacts = []
-    for name in ('ademar', 'bruno', 'cabral', 'daniel', 'erick', 'fabiana', 'gabriel',
-                 'heitor', 'adalberto', 'breno', 'zaratusta'):
+    for name in ('ademar', 'bruno', 'cabral', 'daniel', 'zaratusta'):
         contacts.append(Contact(name=name, email='foo.bar@example.com', phone_number='00 1234 5678'))
-    print(contacts)
+
     pb.add(contacts=contacts)
-    pb.remove(index=12)
-    pb.print_contacts() 
+    pb.remove(index=1)
+    pb.print_contacts()
