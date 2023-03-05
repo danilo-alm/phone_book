@@ -1,4 +1,5 @@
 from typing import List
+import pickle
 
 class Contact:
     def __init__(self, name: str, phone_number: str = 'Empty',
@@ -103,7 +104,7 @@ class PhoneBook:
         return curr.contact
 
 
-    def remove(self, index: int, confirmation=True):
+    def delete(self, index: int, confirmation=True):
         """
         Remove the element in the index `index` from the PhoneBook
 
@@ -169,6 +170,9 @@ Email: {curr.contact.email}\n{"-"*30}
         Returns:
             None
         """
+        if self.length == 0:
+            print('The phonebook is empty.')
+
         curr = self.head
         while curr is not None:
             name, email, phone_number = curr.contact.name, \
@@ -240,12 +244,11 @@ Email: {curr.contact.email}\n{"-"*30}
                     if search_term in curr.contact.email:
                         results.append(curr.contact)
                 case 'phone number':
-                    if search_term in curr.contact.phone_number:
+                    if search_term.replace(' ', '') in curr.contact.phone_number.replace(' ', ''):
                         results.append(curr.contact)
             curr = curr.next
         
         return results
-
 
     def save_to_file(self, filepath: str):
         """
@@ -276,5 +279,5 @@ if __name__ == '__main__':
         contacts.append(Contact(name=name, email='foo.bar@example.com', phone_number='00 1234 5678'))
 
     pb.add(contacts=contacts)
-    pb.remove(index=1)
+    pb.delete(index=1)
     pb.print_contacts()
