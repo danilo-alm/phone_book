@@ -14,32 +14,18 @@ class Node:
         self.next = next
 
 class PhoneBook:
-    length = 0
 
     def __init__(self, head=None):
         self.head = self.tail = head
-        if head is not None:
-            size += 1
-
-    def sort(self):
-        """
-        Sort PhoneBook using TODO: DEFINE SORTING METHOD
-
-        Args:
-            None
-        
-        Returns:
-            None
-        """
-        return NotImplementedError
+        self.length = 1 if head else 0
 
     def push(self, node: Node, update_tail: bool = False):
         """
-        Add an element before the PhoneBook's head
+        Add a new Node to the beginning of the PhoneBook
 
         Args:
-            node: `Node` to be added
-            update_tail: whether to set the new tail as the old head
+            node (Node): `Node` to be added
+            update_tail (bool): whether to set the new tail as the old head
         
         Returns:
             None
@@ -52,10 +38,10 @@ class PhoneBook:
 
     def append(self, node: Node):
         """
-        Add a new element to the PhoneBook's end
+        Add a new Node to the end of the PhoneBook
 
         Args:
-            node: `Node` to be added
+            node (Node): `Node` to be added
         
         Returns:
             None
@@ -66,10 +52,10 @@ class PhoneBook:
 
     def add(self, contacts: List[Contact] or Contact):
         """
-        Adds new contacts in the phone book respecting alphabetic order
+        Adds new contacts in the PhoneBook respecting alphabetic order
 
         Args:
-            contacts: List of `Contact` or a single `Contact` object
+            contacts (List[Contact] or Contact): Contact(s) to be added to list
         
         Returns:
             None
@@ -99,7 +85,41 @@ class PhoneBook:
                 curr.next = node
             self.length += 1
 
-    def print(self):
+    def remove(self, index: int, confirmation=True):
+        """
+        Remove the element in the index `index` from the PhoneBook
+
+        Args:
+            index (int): Index of the element to be removed
+            confirmation (bool): show contact information and \
+            ask whether user really wants to remove it
+        
+        Returns:
+            the removed element
+        """
+        if index >= self.length:
+            return IndexError
+        
+        curr = self.head
+        for _ in range(index):
+            curr = curr.next
+        
+        conf = True
+
+        if confirmation:
+            if input(f'Do you wish to remove the contact:\n{"-"*30}\n \
+                    Name: {curr.contact.name}\n \
+                    Phone Number: {curr.contact.phone_number}\n \
+                    Email: {curr.contact.email}\n{"-"*30}\n \
+                    (Yes/no): ').strip().upper() == 'NO':
+                conf = False
+ 
+        if conf:
+            curr.prev.next = curr.next
+            curr.next.prev = curr.prev
+            return curr
+
+    def print_contacts(self):
         """
         Iterate through every contact in the PhoneBook and print its information
 
@@ -128,6 +148,9 @@ class PhoneBook:
         Returns:
             None
         """
+        if self.head is None:
+            return
+
         print('----- DEBUGGING -----')
         print(f'LIST\'S HEAD: {self.head.contact.name}\nLIST\'S TAIL: {self.tail.contact.name}\nLIST\'S SIZE: {self.length}')
 
@@ -145,10 +168,30 @@ class PhoneBook:
                 next_name = 'None'
             print(f'Previous: {previous_name}\nSelf: {curr.contact.name}\nNext: {next_name}')
             curr = curr.next
+    
+    def save_to_file(self, filepath: str):
+        """
+        Saves a doubly linked list to disk using pickle
 
-from random import shuffle
+        Args:
+            filepath (str): The file path to save the linked list to.
+
+        Returns:
+            None
+        """
+        with open(filepath, 'wb') as f:
+            pickle.dump(self, f)
+
+    @staticmethod
+    def load_from_file(filename):
+        with open(filename, 'rb') as f:
+            return pickle.load(f)
+
 # Debugging
 if __name__ == '__main__':
+    from random import shuffle
+    import pickle
+
     pb = PhoneBook()
     contacts = []
     for name in ('ademar', 'bruno', 'cabral', 'daniel', 'erick', 'fabiana', 'gabriel',
@@ -156,7 +199,6 @@ if __name__ == '__main__':
         contacts.append(Contact(name=name, email='foo.bar@example.com', phone_number='00 1234 5678'))
     shuffle(contacts)
     pb.add(contacts=contacts)
-    pb.print()
+    pb.print_contacts()
     print()
     pb.print_debug()
-    
