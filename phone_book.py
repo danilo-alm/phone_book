@@ -19,13 +19,13 @@ class PhoneBook:
         self.head = self.tail = head
         self.length = 1 if head else 0
 
-    def push(self, node: Node, update_tail: bool = False):
+    def push(self, node: Node):
         """
         Add a new Node to the beginning of the PhoneBook
 
         Args:
             node (Node): `Node` to be added
-            update_tail (bool): whether to set the new tail as the old head
+            
         
         Returns:
             None
@@ -33,8 +33,6 @@ class PhoneBook:
         node.next = self.head
         self.head.prev = node
         self.head = node
-        if update_tail:
-            self.tail = self.head
 
     def append(self, node: Node):
         """
@@ -75,7 +73,7 @@ class PhoneBook:
                 curr = curr.next
             
             if (curr == self.head) and (node.contact.name < curr.contact.name):
-                self.push(node=node, update_tail=True)
+                self.push(node=node)
             elif curr.next is None:
                 self.append(node=node)
             else:
@@ -84,6 +82,26 @@ class PhoneBook:
                 curr.next.prev = node
                 curr.next = node
             self.length += 1
+
+    def get(self, index: int):
+        """
+        Return the `Contact` located in the index `index`
+
+        Args:
+            index (int): The index of the contact
+        
+        Returns:
+            The `Contact` object you asked for
+        """
+        if index >= self.length:
+            return IndexError
+        
+        curr = self.head
+        for _ in range(index):
+            curr = curr.next
+        
+        return curr.contact
+
 
     def remove(self, index: int, confirmation=True):
         """
@@ -111,7 +129,7 @@ class PhoneBook:
                     Name: {curr.contact.name}\n \
                     Phone Number: {curr.contact.phone_number}\n \
                     Email: {curr.contact.email}\n{"-"*30}\n \
-                    (Yes/no): ').strip().upper() == 'NO':
+                    (Yes/no): ').strip().upper() != 'YES':
                 conf = False
  
         if conf:
@@ -197,8 +215,7 @@ if __name__ == '__main__':
     for name in ('ademar', 'bruno', 'cabral', 'daniel', 'erick', 'fabiana', 'gabriel',
                  'heitor', 'adalberto', 'breno', 'zaratusta'):
         contacts.append(Contact(name=name, email='foo.bar@example.com', phone_number='00 1234 5678'))
-    shuffle(contacts)
+    print(contacts)
     pb.add(contacts=contacts)
-    pb.print_contacts()
-    print()
-    pb.print_debug()
+    pb.remove(index=12)
+    pb.print_contacts() 
