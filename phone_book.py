@@ -210,6 +210,43 @@ Email: {curr.contact.email}\n{"-"*30}
             print(f'Previous: {previous_name}\nSelf: {curr.contact.name}\nNext: {next_name}')
             curr = curr.next
     
+    def is_empty(self):
+        return self.length == 0
+
+    def search(self, search_term, by):
+        """
+        Search for a specific contact by name, email or phone number
+
+        Args:
+            search_term (str): what to search for. e.g: "João"
+            by (str): name, email or phone number
+        
+        Returns:
+            List of Contacts matching the search term
+        """
+
+        if by not in ('name', 'email', 'phone number'):
+            return
+        
+        results = []
+
+        curr = self.head
+        while curr.next is not None:
+            match by:
+                case 'name':
+                    if search_term in curr.contact.name:
+                        results.append(curr.contact)
+                case 'email':
+                    if search_term in curr.contact.email:
+                        results.append(curr.contact)
+                case 'phone number':
+                    if search_term in curr.contact.phone_number:
+                        results.append(curr.contact)
+            curr = curr.next
+        
+        return results
+
+
     def save_to_file(self, filepath: str):
         """
         Saves a doubly linked list to disk using pickle
