@@ -161,7 +161,7 @@ Email: {curr.contact.email}\n{"-"*30}
 
         return return_value
 
-    def print_contacts(self):
+    def print_contacts(self, only_name=True):
         """
         Iterate through every contact in the PhoneBook and print its information
 
@@ -172,6 +172,15 @@ Email: {curr.contact.email}\n{"-"*30}
         """
         if self.length == 0:
             print('The phonebook is empty.')
+        index = 1
+
+        if only_name:
+            curr = self.head
+            while curr:
+                print(f'Number {index}: {curr.contact.name}')
+                curr = curr.next
+                index += 1
+            return 
 
         curr = self.head
         while curr is not None:
@@ -179,8 +188,9 @@ Email: {curr.contact.email}\n{"-"*30}
                                         curr.contact.email, \
                                         curr.contact.phone_number
             print('-'*30)
-            print(f'Name: {name}\nEmail: {email}\nPhone Number: {phone_number}')
+            print(f'Number {index}:\nName: {name}\nEmail: {email}\nPhone Number: {phone_number}')
             curr = curr.next
+            index += 1
     
     def print_debug(self):
         """
@@ -266,18 +276,21 @@ Email: {curr.contact.email}\n{"-"*30}
     @staticmethod
     def load_from_file(filename):
         with open(filename, 'rb') as f:
-            return pickle.load(f)
+            try:
+                return pickle.load(f)
+            except EOFError:
+                return PhoneBook()
 
 # Debugging
 if __name__ == '__main__':
     from random import shuffle
-    import pickle
 
     pb = PhoneBook()
     contacts = []
     for name in ('ademar', 'bruno', 'cabral', 'daniel', 'zaratusta'):
         contacts.append(Contact(name=name, email='foo.bar@example.com', phone_number='00 1234 5678'))
 
+    shuffle(contacts)
     pb.add(contacts=contacts)
     pb.delete(index=1)
     pb.print_contacts()
