@@ -1,5 +1,6 @@
 from typing import List
 from prettytable import PrettyTable
+from time import sleep
 import pickle
 
 class Contact:
@@ -142,8 +143,8 @@ class PhoneBook:
             text = \
 f'''Do you wish to remove the contact:\n{"-"*30}
 Name: {curr.contact.name}
-Phone Number: {curr.contact.phone_number}
 Email: {curr.contact.email}\n{"-"*30}
+Phone Number: {curr.contact.phone_number}
 (Yes/no): '''
             
             if input(text).strip().upper() != 'YES':
@@ -194,6 +195,7 @@ Email: {curr.contact.email}\n{"-"*30}
             curr = curr.next
             index += 1
         print(pt)
+        sleep(.5)
     
     def print_debug(self):
         """
@@ -267,13 +269,13 @@ Email: {curr.contact.email}\n{"-"*30}
             return
         
         search_term = search_term.upper()
-        pt = PrettyTable(['Name', 'Email', 'Phone Number'])
+        pt = PrettyTable(['Index', 'Name', 'Email', 'Phone Number'])
         pt.title = 'Results'
         
         index = 1
         curr = self.head
 
-        while curr.next is not None:
+        while curr is not None:
             match by:
                 case 'name':
                     if search_term in curr.contact.name.upper():
@@ -297,6 +299,7 @@ Email: {curr.contact.email}\n{"-"*30}
             index += 1
         
         print(pt)
+        sleep(.5)
 
     def save_to_file(self, filepath: str):
         """

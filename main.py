@@ -1,6 +1,6 @@
 from phone_book import PhoneBook
-from time import sleep
 import os
+from time import sleep
 
 def main():
     pb = load_phonebook()
@@ -22,6 +22,7 @@ def main():
             chosen = int(input(f'Choose an option (1-{len(options)}): '))
         except ValueError:
             print('Invalid option.')
+            sleep(.5)
             continue
 
         if not 0 < chosen <= len(options):
@@ -60,7 +61,8 @@ def main():
             case 7:
                 exit()
         
-        sleep(.5)
+        if chosen not in (2, 3):
+            os.system('cls||clear')
 
 def load_phonebook():
     if os.path.exists(FILENAME):
