@@ -1,4 +1,5 @@
 from typing import List
+from prettytable import PrettyTable
 import pickle
 
 class Contact:
@@ -49,18 +50,23 @@ class PhoneBook:
         node.prev = self.tail
         self.tail = node
 
-    def add(self, contacts: List[Contact] or Contact):
+    def add(self, contacts: List[Contact] = None, interactive=False):
         """
         Adds new contacts in the PhoneBook respecting alphabetic order
 
         Args:
             contacts (List[Contact] or Contact): Contact(s) to be added to list
+            interactive (bool): Whether to ask for the contact information
         
         Returns:
             None
         """
-        if not isinstance(contacts, list):
-            contacts = [contacts]
+
+        if interactive:
+            name = input('Name: ')
+            phone_number = input('Phone Number: ')
+            email = input('Email: ')
+            contacts = [Contact(name=name, phone_number=phone_number, email=email)]
 
         if self.head is None:
             self.head = self.tail = Node(contact=contacts.pop(0))
@@ -161,7 +167,7 @@ Email: {curr.contact.email}\n{"-"*30}
 
         return return_value
 
-    def print_contacts(self, only_name=True):
+    def print_contacts(self):
         """
         Iterate through every contact in the PhoneBook and print its information
 
@@ -172,25 +178,21 @@ Email: {curr.contact.email}\n{"-"*30}
         """
         if self.length == 0:
             print('The phonebook is empty.')
+            return
+
         index = 1
 
-        if only_name:
-            curr = self.head
-            while curr:
-                print(f'Number {index}: {curr.contact.name}')
-                curr = curr.next
-                index += 1
-            return 
-
         curr = self.head
+        pt = PrettyTable()
+        pt.field_names = ['Index', 'Name', 'Phone Number', 'Email']
         while curr is not None:
-            name, email, phone_number = curr.contact.name, \
-                                        curr.contact.email, \
-                                        curr.contact.phone_number
-            print('-'*30)
-            print(f'Number {index}:\nName: {name}\nEmail: {email}\nPhone Number: {phone_number}')
+            pt.add_row([index,
+                           curr.contact.name,
+                           curr.contact.email,
+                           curr.contact.phone_number])
             curr = curr.next
             index += 1
+        print(pt)
     
     def print_debug(self):
         """
@@ -227,38 +229,73 @@ Email: {curr.contact.email}\n{"-"*30}
     def is_empty(self):
         return self.length == 0
 
-    def search(self, search_term, by):
+    def search(self, search_term=None, by=None, interactive=False):
         """
         Search for a specific contact by name, email or phone number
 
         Args:
             search_term (str): what to search for. e.g: "João"
             by (str): name, email or phone number
+            interactive (bool): ask user what to search by
         
         Returns:
             List of Contacts matching the search term
         """
 
+        if interactive:
+            while True:
+                by = ('Name', 'Email', 'Phone Number')
+                print('Search by:')
+                for index, item in enumerate(by, start=1):
+                    print(f'{index}. {item}')
+                
+                chosen = input('Choose an option: ')
+                try:
+                    chosen = int(chosen)
+                except ValueError:
+                    continue
+
+                if not 0 < chosen <= len(by):
+                    continue
+
+                by = by[chosen - 1].lower()
+                search_term = input('Search for: ')
+                break
+
         if by not in ('name', 'email', 'phone number'):
             return
         
-        results = []
-
+        search_term = search_term.upper()
+        pt = PrettyTable(['Name', 'Email', 'Phone Number'])
+        pt.title = 'Results'
+        
+        index = 1
         curr = self.head
+
         while curr.next is not None:
             match by:
                 case 'name':
-                    if search_term in curr.contact.name:
-                        results.append(curr.contact)
+                    if search_term in curr.contact.name.upper():
+                        pt.add_row([index,
+                                    curr.contact.name,
+                                    curr.contact.email,
+                                    curr.contact.phone_number])
                 case 'email':
-                    if search_term in curr.contact.email:
-                        results.append(curr.contact)
+                    if search_term in curr.contact.email.upper():
+                        pt.add_row([index,
+                                    curr.contact.name,
+                                    curr.contact.email,
+                                    curr.contact.phone_number])
                 case 'phone number':
                     if search_term.replace(' ', '') in curr.contact.phone_number.replace(' ', ''):
-                        results.append(curr.contact)
+                        pt.add_row([index,
+                                    curr.contact.name,
+                                    curr.contact.email,
+                                    curr.contact.phone_number])
             curr = curr.next
+            index += 1
         
-        return results
+        print(pt)
 
     def save_to_file(self, filepath: str):
         """
@@ -292,5 +329,5 @@ if __name__ == '__main__':
 
     shuffle(contacts)
     pb.add(contacts=contacts)
-    pb.delete(index=1)
+    #pb.delete(index=1)
     pb.print_contacts()

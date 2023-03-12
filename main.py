@@ -1,19 +1,19 @@
-from phone_book import PhoneBook, Contact
+from phone_book import PhoneBook
+from time import sleep
 import os
 
 def main():
     pb = load_phonebook()
-    
+
     options = ('Add a new contact',
-               'Delete a contact',
-               'Search for a contact',
                'See all contacts',
+               'Search for a contact',
+               'Delete a contact',
                'Delete ALL contacts',
                'Exit')
 
     while True:
-        print('\n' + '-'*40)
-
+        print('- '*30)
         for index, option in enumerate(options):
             print(f'{index + 1}. {option}')
 
@@ -23,28 +23,24 @@ def main():
             print('Invalid option.')
             continue
 
-        if not 0 < chosen < len(options):
+        if not 0 < chosen <= len(options):
             continue
 
         match chosen:
 
             case 1:  # Add
-                name = input('Name: ')
-                email = input('Email: ')
-                phone_number = input('Phone Number: ')
-                pb.add(contacts=[Contact(name=name, email=email, phone_number=phone_number)])
+                pb.add(interactive=True)
                 pb.save_to_file(FILENAME)
 
-            case 2:  # Delete
-                return NotImplementedError
-                pb.delete()
+            case 2:  # Print
+                pb.print_contacts()
 
             case 3:  # Search
-                return NotImplementedError
-                pb.search()
+                pb.search(interactive=True)
 
-            case 4:  # Print
-                pb.print_contacts()
+            case 4:  # Delete
+                return NotImplementedError
+                pb.delete()
 
             case 5:  # Delete ALL
                 check = input('THIS WILL DELETE ALL THE CONTACTS. TYPE "I\'M SURE" IF YOU\'RE SURE: ')
@@ -52,8 +48,10 @@ def main():
                     pb = PhoneBook()
                     pb.save_to_file(FILENAME)
 
-            case 'Exit':
+            case 6:
                 exit()
+        
+        sleep(.5)
 
 def load_phonebook():
     if os.path.exists(FILENAME):
