@@ -122,9 +122,11 @@ class PhoneBook:
         Returns:
             the removed element
         """
-        if index >= self.length:
+        if not 0 < index <= self.length:
             return IndexError
         
+        index -= 1
+
         if index == 0:
             curr = self.head
         elif index == self.length - 1:
@@ -183,8 +185,7 @@ Email: {curr.contact.email}\n{"-"*30}
         index = 1
 
         curr = self.head
-        pt = PrettyTable()
-        pt.field_names = ['Index', 'Name', 'Phone Number', 'Email']
+        pt = PrettyTable(['Index', 'Name', 'Email', 'Phone Number'])
         while curr is not None:
             pt.add_row([index,
                            curr.contact.name,
@@ -245,7 +246,7 @@ Email: {curr.contact.email}\n{"-"*30}
         if interactive:
             while True:
                 by = ('Name', 'Email', 'Phone Number')
-                print('Search by:')
+                print('\nSearch by:')
                 for index, item in enumerate(by, start=1):
                     print(f'{index}. {item}')
                 
@@ -329,5 +330,5 @@ if __name__ == '__main__':
 
     shuffle(contacts)
     pb.add(contacts=contacts)
-    #pb.delete(index=1)
+    pb.delete(index=1)
     pb.print_contacts()

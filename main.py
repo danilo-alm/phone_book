@@ -10,6 +10,7 @@ def main():
                'Search for a contact',
                'Delete a contact',
                'Delete ALL contacts',
+               'Clear screen',
                'Exit')
 
     while True:
@@ -39,8 +40,13 @@ def main():
                 pb.search(interactive=True)
 
             case 4:  # Delete
-                return NotImplementedError
-                pb.delete()
+                index = input('What index do you want to delete? ')
+                try:
+                    pb.delete(int(index))
+                except IndexError:
+                    print('Index doesn\'t exist')
+                except ValueError:
+                    print('Not a number')
 
             case 5:  # Delete ALL
                 check = input('THIS WILL DELETE ALL THE CONTACTS. TYPE "I\'M SURE" IF YOU\'RE SURE: ')
@@ -49,6 +55,9 @@ def main():
                     pb.save_to_file(FILENAME)
 
             case 6:
+                os.system('cls||clear')
+
+            case 7:
                 exit()
         
         sleep(.5)
